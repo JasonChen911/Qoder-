@@ -58,6 +58,7 @@ export function buildPlanText(plan: ActivityPlan) {
   const lines = [
     getPlanTitle(plan.setup, selected),
     getPlanIntro(plan.setup),
+    ...(plan.aiNote ? [`AI 策划建议：${plan.aiNote}`] : []),
     '',
     `适用人数：${plan.setup.people} 人｜场地：${venueLabels[plan.setup.venue]}｜总时长：${plan.setup.duration} 分钟`,
     `预算估算：¥${calculateTotal(plan.materials).toFixed(2)}（限额 ¥${plan.setup.budget}，均为估算值）`,

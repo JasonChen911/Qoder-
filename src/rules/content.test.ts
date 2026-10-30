@@ -38,4 +38,13 @@ describe('plan content', () => {
     expect(text).toContain('备用方案');
     expect(text).toContain(calculateSchedule(selected, setup.duration).items[1].title);
   });
+
+  it('keeps an adopted AI recommendation in the exported plan', () => {
+    const text = buildPlanText({
+      id: 'ai-plan', createdAt: '2026-10-30T00:00:00.000Z', setup,
+      selectedIds: ['board-one-night'], materials: [], contingencyNote: '',
+      aiNote: '用短回合让新成员都参与讨论。',
+    });
+    expect(text).toContain('AI 策划建议：用短回合让新成员都参与讨论。');
+  });
 });

@@ -82,6 +82,11 @@ describe('planner rules', () => {
     expect(getRecommendations({ ...setup, people: 101 })).toHaveLength(0);
   });
 
+  it('does not recommend an activity that already exceeds the budget or duration', () => {
+    expect(getRecommendations({ ...setup, budget: 0 })).toHaveLength(0);
+    expect(getRecommendations({ ...setup, duration: 30 }).every(item => item.duration <= 10)).toBe(true);
+  });
+
   it('adjusts headcount and derived materials after a low-attendance response', () => {
     const selected = [byId('ice-common-ground')];
     const result = applyContingency(setup, selected, 'low-attendance', 'pair-up');

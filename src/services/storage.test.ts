@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { clearLocalState, loadLocalState, saveLocalState, STORAGE_KEY } from './storage';
 import type { LocalState } from '../types';
 
-const emptyState: LocalState = { recentPlan: null, favorites: [] };
+const emptyState: LocalState = { recentPlan: null, favorites: [], history: [] };
 
 function memoryStorage(initial?: string) {
   const values = new Map<string, string>(initial ? [[STORAGE_KEY, initial]] : []);
@@ -21,6 +21,7 @@ describe('local storage', () => {
         id: 'favorite', createdAt: '2026-10-30', setup: { type: 'music', people: 12, budget: 100, duration: 60, venue: 'hall', goal: '' },
         selectedIds: ['music-lyric-puzzle'], materials: [], contingencyNote: '备用',
       }],
+      history: [],
     };
     const storage = memoryStorage();
 
@@ -40,5 +41,14 @@ describe('local storage', () => {
 
     expect(clearLocalState(storage)).toBe(true);
     expect(storage.getItem(STORAGE_KEY)).toBeNull();
+  });
+
+  it('migrates existing saved plans into the history list', () => {
+    const plan: LocalState['recentPlan'] = {
+      id: 'old-plan', createdAt: '2026-10-30', setup: { type: 'music', people: 12, budget: 100, duration: 60, venue: 'hall', goal: '' },
+      selectedIds: [], materials: [], contingencyNote: '',
+    };
+    const result = loadLocalState(memoryStorage(JSON.stringify({ recentPlan: plan, favorites: [] })));
+    expect(result.data.history.map(item => item.id)).toEqual(['old-plan']);
   });
 });

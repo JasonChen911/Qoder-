@@ -85,9 +85,16 @@ const fitsConditions = (activity: Activity, setup: ActivitySetup) =>
   activity.maxPeople >= setup.people &&
   activity.venues.includes(setup.venue);
 
+export function getFeasibleActivities(setup: ActivitySetup) {
+  return activities.filter(activity =>
+    fitsConditions(activity, setup) &&
+    !calculateSchedule([activity], setup.duration).isOverTime &&
+    calculateTotal(buildMaterials([activity], setup.people)) <= setup.budget,
+  );
+}
+
 export function getRecommendations(setup: ActivitySetup) {
-  return activities
-    .filter((activity) => fitsConditions(activity, setup))
+  return getFeasibleActivities(setup)
     .sort((a, b) => {
       const costDifference = calculateActivityCost(a, setup.people) - calculateActivityCost(b, setup.people);
       return costDifference || a.duration - b.duration;

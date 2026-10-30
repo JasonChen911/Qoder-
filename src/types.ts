@@ -68,6 +68,7 @@ export interface ActivityPlan {
   contingencyNote: string;
   eventId?: string;
   optionId?: string;
+  aiNote?: string;
 }
 
 export interface ContingencyOption {
@@ -95,4 +96,5 @@ export interface ContingencyResult {
 export interface LocalState {
   recentPlan: ActivityPlan | null;
   favorites: ActivityPlan[];
+  history: ActivityPlan[];
 }
