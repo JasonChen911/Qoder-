@@ -23,3 +23,11 @@ html{scroll-behavior:smooth}.workspace{scroll-margin-top:18px}
 @media(max-width:580px){.panel:has(.activity-grid) .section-title{min-height:85px;padding-right:90px}.panel:has(.activity-grid) .section-title::after{width:90px;height:90px;top:-7px;right:0}.result-decoration{display:none}}
 @media(prefers-reduced-motion:reduce){.hero-art::before{animation:none}}
 @media print{.hero-art::before,.panel:has(.activity-grid) .section-title::after,.result-decoration{display:none!important}}
+
+/* Brand mark in the navigation, supportive states and footer. */
+.topbar .brand-mark{width:45px;height:45px;object-fit:contain;display:block;background:none;border-radius:0;margin-left:-3px}
+.hero .eyebrow{font-family:Georgia,'Times New Roman',serif;font-size:14px;font-style:italic;font-weight:700;letter-spacing:.09em;color:#547243}
+.empty-state .empty-logo{display:block;width:76px;height:76px;object-fit:contain;margin:0 auto 8px;filter:drop-shadow(0 8px 10px #51744622)}
+.bottom-note .bottom-logo{width:65px;height:65px;object-fit:contain;flex:none}
+.footer-brand{display:inline-flex;align-items:center;gap:7px}.footer-brand img{width:21px;height:21px;object-fit:contain}
+@media(max-width:580px){.bottom-note .bottom-logo{width:42px;height:42px}.hero .eyebrow{font-size:11px;letter-spacing:.1em}}
