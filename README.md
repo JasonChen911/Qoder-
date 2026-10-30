@@ -26,7 +26,7 @@ npm run start
 
 ## 启用 DeepSeek 推荐
 
-在网页右上角打开「设置」，填入自己的 DeepSeek API Key 并保存，然后在挑选环节页点击「要不问问AI？」。也可以将 `.env.example` 复制为 `.env.local`，填写 `DEEPSEEK_API_KEY=` 后重启服务。不要将 `.env.local` 提交到 GitHub，也不要把密钥发到聊天中。
+在网页右上角打开「设置」，填入自己的 DeepSeek API Key 并保存，然后在挑选环节页点击「要不问问AI？」进入聊天。可以多轮补充偏好；AI 提出可执行环节后，点击「确认采用，更新当前方案」才会写入选择。也可以将 `.env.example` 复制为 `.env.local`，填写 `DEEPSEEK_API_KEY=` 后重启服务。不要将 `.env.local` 提交到 GitHub，也不要把密钥发到聊天中。
 
 网页只调用同源 `/api/ai/recommend`；本机 Node 服务向 DeepSeek 的 Chat Completions 接口发送请求，使用 `deepseek-flash` 与 JSON 输出。页面设置的 Key 仅保存在当前浏览器的 localStorage，请勿在共享电脑上保存；请求时经同源本机服务转发，不写入前端构建文件。`.env.local` 的服务端 Key 可作为备用。服务默认只监听 `127.0.0.1:8787`。Vite 将 `/api` 转发给本机服务。未配置密钥时，手动策划保持可用。AI 建议只会从本地活动库中选 1–2 项，采用前再次校验人数、场地、时间与预算。启用后会消耗你的 DeepSeek API 额度。
 
