@@ -31,3 +31,13 @@ html{scroll-behavior:smooth}.workspace{scroll-margin-top:18px}
 .bottom-note .bottom-logo{width:65px;height:65px;object-fit:contain;flex:none}
 .footer-brand{display:inline-flex;align-items:center;gap:7px}.footer-brand img{width:21px;height:21px;object-fit:contain}
 @media(max-width:580px){.bottom-note .bottom-logo{width:42px;height:42px}.hero .eyebrow{font-size:11px;letter-spacing:.1em}}
+
+/* Tactile background scenes keep the center clear for content. */
+.hero::before{content:'';position:absolute;inset:0;left:50%;width:100vw;transform:translateX(-50%);z-index:0;background:#f8f5eb url('/images/hero-paper-background.png') center center/cover no-repeat;pointer-events:none}
+.hero-art{z-index:1}
+.workspace{background-color:#fffefa;background-image:url('/images/workspace-paper-background.png');background-position:center top;background-size:100% auto;background-repeat:repeat-y}
+.panel,.result-section{background-color:#fffefb;box-shadow:0 18px 50px #324b3210}
+.workspace-head,.progress,.panel,.result{position:relative;z-index:1}
+@media(max-width:850px){.hero::before{background-position:63% center}.workspace{background-size:auto 700px;background-position:center top}}
+@media(max-width:580px){.hero::before{background-position:54% center}.workspace{background-size:auto 620px}.panel,.result-section{background-color:#fffefcf5}}
+@media print{.hero::before{display:none!important}.workspace,.panel,.result-section{background:#fff!important;box-shadow:none!important}}
