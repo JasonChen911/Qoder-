@@ -6,7 +6,7 @@ import type { ActivitySetup } from '../types';
 
 interface AiSuggestion { ids: string[]; reason: string }
 
-export default function AiRecommendation({ setup, onApply }: { setup: ActivitySetup; onApply: (suggestion: AiSuggestion) => void }) {
+export default function AiRecommendation({ setup, apiKey, onOpenSettings, onApply }: { setup: ActivitySetup; apiKey: string; onOpenSettings: () => void; onApply: (suggestion: AiSuggestion) => void }) {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -24,11 +24,11 @@ export default function AiRecommendation({ setup, onApply }: { setup: ActivitySe
 
   async function ask() {
     setOpen(true); setError(''); setSuggestion(null);
-    if (!available || !candidates.length) return;
+    if ((!available && !apiKey) || !candidates.length) return;
     setLoading(true);
     try {
       const response = await fetch('/api/ai/recommend', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'X-DeepSeek-API-Key': apiKey } : {}) },
         body: JSON.stringify({
           setup,
           candidates: candidates.map(item => ({
@@ -51,7 +51,7 @@ export default function AiRecommendation({ setup, onApply }: { setup: ActivitySe
     <button className="ai-trigger" onClick={ask} disabled={loading}>{loading ? 'AI 正在思考…' : '要不问问AI？'} <ArrowRight size={17}/></button>
     <small className="ai-privacy">启用后会将活动条件与候选环节发送给 DeepSeek；方案记录只保存在本机。</small>
     {open && <div className="ai-response" role="status">
-      {available === false ? <p>AI 暂未启用。请在项目根目录配置 <code>.env.local</code> 中的 DeepSeek API Key，然后重启服务。手动推荐仍可正常使用。</p>
+      {available === false && !apiKey ? <p>尚未设置 DeepSeek API Key。<button className="text-button" onClick={onOpenSettings}>打开设置填写 Key ↗</button> 手动推荐仍可正常使用。</p>
         : !candidates.length ? <p>目前没有满足预算、场地和时长的环节。请先放宽条件，再问 AI。</p>
         : loading ? <p>正在对照你的条件和活动库寻找合适组合…</p>
         : error ? <p className="ai-error">{error}</p>

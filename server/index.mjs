@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, resolve, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { recommendWithDeepSeek } from './ai.mjs';
+import { selectApiKey } from './api-key.mjs';
 
 const root = resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
 const port = Number(process.env.API_PORT || 8787);
@@ -31,12 +32,15 @@ const server = createServer(async (req, res) => {
     if (origin && !new Set([`http://127.0.0.1:5173`, `http://localhost:5173`, `http://${host}:${port}`]).has(origin)) return send(res, 403, { error: '来源不受支持' });
     if (pathname === '/api/ai/status' && req.method === 'GET') return send(res, 200, { available: !!process.env.DEEPSEEK_API_KEY, model: 'deepseek-flash' });
     if (pathname !== '/api/ai/recommend' || req.method !== 'POST') return send(res, 404, { error: '接口不存在' });
-    if (!process.env.DEEPSEEK_API_KEY) return send(res, 503, { error: '尚未配置 DeepSeek API Key。请在项目根目录的 .env.local 中配置后重启服务。' });
+    let key;
+    try { key = selectApiKey(req.headers['x-deepseek-api-key'], process.env.DEEPSEEK_API_KEY); }
+    catch (error) { return send(res, 400, { error: error.message }); }
+    if (!key) return send(res, 503, { error: '尚未配置 DeepSeek API Key。请打开设置填写自己的 Key。' });
     const now = Date.now();
     while (recentRequests.length && recentRequests[0] < now - 60000) recentRequests.shift();
     if (recentRequests.length >= 6) return send(res, 429, { error: '请求过于频繁，请稍后再试' });
     recentRequests.push(now);
-    try { return send(res, 200, await recommendWithDeepSeek(await readJson(req), process.env.DEEPSEEK_API_KEY)); }
+    try { return send(res, 200, await recommendWithDeepSeek(await readJson(req), key)); }
     catch (error) { return send(res, error.name === 'TimeoutError' ? 504 : 400, { error: error.message || 'AI 请求失败' }); }
   }
   const requested = pathname === '/' ? '/index.html' : pathname;
